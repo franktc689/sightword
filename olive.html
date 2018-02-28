@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+  <title>Golden Words</title>
+  <!-- CSS Imports -->
+  <!-- <link href="css/app.css" rel="stylesheet"> -->
+  <!-- JS Imports -->
+
+  <style>
+  * {
+    box-sizing: border-box;
+    margin: 0px 0px;
+    padding: 0px 0px;
+    list-style: none;
+    background-color: white;
+  }
+
+ @font-face {
+    font-family: 'qbeginners_boldregular';
+    src: url('res_49752_qbegb___-webfont.woff2') format('woff2'),
+         url('res_49752_qbegb___-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.menuButton {
+    padding: 4px 4px;
+    width: 100%;
+    height: 60px;
+    background: olive;
+    color: white;
+    font-family: 'qbeginners_boldregular';
+    font-weight:500;
+    font-style:normal;
+    font-size: 45px;
+}
+
+.menu {
+  position: absolute;
+  padding: 4px 4px;
+  width: 100%;
+  height: 100%;
+  background: white;
+  color: indigo;
+  font-family: 'qbeginners_boldregular';
+  font-weight:500;
+  font-style:normal;
+  font-size: 35px;
+  visibility: hidden;
+}
+
+.menu.show {
+  visibility: visible;
+}
+ .box {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: 10px;
+    margin-right: 10px;
+    padding: 10px 10px;
+    padding-top: 25px;
+    height: 140px;
+    width: 230px;
+    font-family: 'qbeginners_boldregular';
+    font-weight:500;
+    font-style:normal;
+    font-size: 80px;
+    text-align: center;
+    background-color: white
+    color:  grey;
+    border-radius:  5px;
+    border: 1px solid grey;
+    float: left;
+    opacity: 1.0;
+  }
+  .box.yellow{
+    background-color: yellow;
+  }
+  .box.blue{
+    background-color: blue;
+  }
+  .box.orange{
+    background-color: orange;
+  }
+  .box.blue{
+    background-color: blue;
+  }
+  .box.lime{
+    background-color: lime;
+  }
+  .box.indigo{
+    background-color: indigo;
+  }
+  .box.white{
+    background-color: white;
+  }
+  .box.pink{
+    background-color: pink;
+  }
+  .newline {
+    clear: left;
+  }
+
+ .letterBox {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: 10px;
+    margin-right: 10px;
+    padding: 10px 10px;
+    padding-top: 25px;
+    height: 140px;
+    width: 80px;
+    font-family: 'qbeginners_boldregular';
+    font-weight:500;
+    font-style:normal;
+    font-size: 80px;
+    text-align: center;
+    background-color: white
+    color:  grey;
+    border-radius:  5px;
+    border: 1px solid grey;
+    float: left;
+    opacity: 1.0;
+  }
+
+  .nextButton {
+     margin-top: 5px;
+     margin-bottom: 5px;
+     margin-left: 10px;
+     margin-right: 10px;
+     padding: 10px 10px;
+     padding-top: 25px;
+     height: 140px;
+     width: 100px;
+     font-family: 'qbeginners_boldregular';
+     font-weight:500;
+     font-style:normal;
+     font-size: 30px;
+     text-align: center;
+     background-color: green;
+     color:  yellow;
+     border-radius:  5px;
+     border: 1px solid grey;
+     float: left;
+     opacity: 1.0;
+     visibility: hidden;
+   }
+  .nextButton.show {
+    visibility: visible;
+  }
+  </style>
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+</head>
+<body>
+  <div class="menuButton"> Olive </div>
+  <div class="menu">
+    <div id="menuList"> </div>
+    <div id="closeMenu"> Close </div>
+  </div>
+
+  <div id="containerSightWords"></div>
+  <div id="containerReadSpellWords"></div>
+  <div id="containerSpellingTest"></div>
+  </div>
+  <script>
+
+  var signWords = [
+    ["been","were","could","other","ran","ask","far","own","these","bird","take","another","know","would","each","last","small","use","than","minutes","month","hour","light","parant","spell","study","fire","cold","plant","space","race","ride"]    ,
+  ]
+  var spellWords = [
+    ["ant","camp","went","bump","and","send","best","bank","must","sink"],
+    ["blot","plug","plus","slip","glad","clap","club","flag","flat","slow"],
+    ["been","were","could","other","ran","ask","far","own","these","bird","take","another","know","would","each","last","small","use","than","minutes","month","hour","light","parant","spell","study","fire","cold","plant","space","race","ride"],
+  ]
+  var spellTestWords = [
+    ["ant","camp","went","bump","and","send","best","bank","must","sink"],
+    ["blot","plug","plus","slip","glad","clap","club","flag","flat","slow"],
+  ]
+  const click3 = 2;
+  var completed = 0;//(words.length) * click3;
+  var completedCnt = 0;
+  var cnt   = [];
+  var words = [];
+  var wordNum = 0;
+  var spellCheckCntExpected = 0
+  var spellCheckCnt = 0
+  var set = 0;
+//  var selectLetterBox = 0;
+
+  $(function() {
+    // create menu
+    var signWordsList=""
+    var spellWordsList=""
+    var spellingTestList=""
+    for(i=0;i<signWords.length;i++ ){
+      signWordsList += "<div class=\"menuItem\" data-gameType=\"ReadSigntWord\" data-set=" + i + ">Sight Words:" + signWords[i][0]+"," +signWords[i][1] + ",..." + "</div>";
+    }
+    for(i=0;i<spellWords.length;i++ ){
+      spellWordsList += "<div class=\"menuItem\" data-gameType=\"ReadSpellWord\" data-set=" + i + ">Spelling:"+ spellWords[i][0]+"," +spellWords[i][1] + ",..." +"</div>";
+    }
+    for(i=0;i<spellTestWords.length;i++ ){
+      spellingTestList += "<div class=\"menuItem\" data-gameType=\"SpellWordGames\" data-set=" + i + ">Spelling Games:"+ spellTestWords[i][0]+"," +spellTestWords[i][1] + ",..." +"</div>";
+    }
+    $("#menuList").html(signWordsList+spellWordsList+spellingTestList)
+
+    var gameType = localStorage.getItem("gameType")
+    set = localStorage.getItem("set") || 0;
+    if ( gameType == "ReadSigntWord" ){
+      loadSightWordGame(set)
+    }
+    else if ( gameType == "ReadSpellWord" ){
+      loadReadSpellWordGame(set)
+    }
+    else {
+      wordNum = 0
+      loadSpellTestGame(set,wordNum);
+    }
+  });
+
+  function loadReadSpellWordGame(id){
+    var boxs ="";
+    words = spellWords[id];
+    for (i=0;i<words.length;i++){
+      cnt[i] = 0;
+      boxs += "<div class=\"box\" data-id=" + i + ">" + spellWords[id][i] + "</div>";
+    }
+    completed = words.length * click3;
+    $("#containerReadSpellWords").html(boxs);
+  }
+
+  function loadSightWordGame(id){
+    var boxs ="";
+    words = signWords[id];
+    for (i=0;i<words.length;i++){
+      cnt[i] = 0;
+      boxs += "<div class=\"box\" data-id=" + i + ">" + signWords[id][i] + "</div>";
+    }
+    completed = words.length * click3;
+    $("#containerSightWords").html(boxs);
+  }
+
+  function loadSpellTestGame(set,wordNum){
+    var boxs ="";
+    var word = spellTestWords[set][wordNum];
+    spellCheckCntExpected = word.length - 2
+    spellCheckCnt = 0
+    for (i=0;i<word.length;i++){
+      if ( i < 2)
+        boxs += "<div class=\"letterBox\" data-id=" + i +  " data-blank=\"false\"" + "data-letter=\""+ word[i] + "\"" +  ">" + word[i] + "</div>";
+      else
+        boxs += "<input class=\"letterBox\" data-id=" + i +  " data-blank=\"true\"" +  "data-letter=\""+ word[i] + "\"" +  "></input>";
+    }
+    boxs += "<div class=\"nextButton show\" id=\"speak\"> speak </div>";
+    boxs += "<div class=\"nextButton\" id=\"next\"> next </div>";
+    $("#containerSpellingTest").html(boxs);
+
+    var utterThis = new SpeechSynthesisUtterance(word);
+    utterThis.lang = 'en-au'//'en-au';
+    utterThis.rate = 0.8;
+    window.speechSynthesis.speak(utterThis);
+  }
+
+  $("#containerSpellingTest").delegate("#speak","mouseup", function(){
+    var word = spellTestWords[set][wordNum];
+    var utterThis = new SpeechSynthesisUtterance(word);
+    utterThis.lang = 'en-au'//'en-au';
+    utterThis.rate = 0.8;
+    window.speechSynthesis.speak(utterThis);
+  })
+
+  $("#containerSpellingTest").delegate("#next","mouseup", function(){
+    if ( wordNum < (spellTestWords[set].length-1) ){
+      wordNum++
+      loadSpellTestGame(set,wordNum);
+    }
+    else {
+      var utterThis = new SpeechSynthesisUtterance("Well Done !");
+      utterThis.lang = 'en-au'//'en-au';
+      utterThis.rate = 0.8;
+      window.speechSynthesis.speak(utterThis);
+    }
+  });
+
+
+  $("#containerSpellingTest").delegate(".letterBox","keyup", function(e){
+      var expectedLetter = $(this).attr("data-letter");
+      var enterLetter = e.key;
+      if ( expectedLetter == enterLetter || expectedLetter.toUpperCase() == enterLetter){
+        $(this).val(expectedLetter)
+        $(this).css("background-color","green")
+        spellCheckCnt++;
+        if ( spellCheckCnt == spellCheckCntExpected ){
+          var utterThis = new SpeechSynthesisUtterance("Good Job! Olive");
+          utterThis.lang = 'en-au'//'en-au';
+          utterThis.rate = 0.8;
+          window.speechSynthesis.speak(utterThis);
+          $(".nextButton").addClass("show")
+        }
+      }
+      else{
+          var utterThis = new SpeechSynthesisUtterance("Try again! Please!");
+          utterThis.lang = 'en-au'//'en-au';
+          utterThis.rate = 0.8;
+          window.speechSynthesis.speak(utterThis);
+        $(this).val("")
+        $(this).css("background-color","white")
+      }
+
+  });
+
+
+
+  $(".menuButton").on("mousedown",function(){
+    $(".menu").addClass("show");
+  });
+  $("#closeMenu").on("mousedown",function(){
+    $(".menu").removeClass("show");
+  });
+
+  $("#containerReadSpellWords").delegate(".box","mouseup", function(){
+    msg = $(this).html();
+    id = $(this).attr("data-id");
+    spelling = "";
+    for( i=0;i<msg.length;i++){
+      if ( msg[i] == "a" )
+      	spelling += " \"A \"";
+      else
+      	spelling += " \"" + msg[i] + " \"";
+    }
+
+    msg = spelling + ","+msg ;
+    var utterThis = new SpeechSynthesisUtterance(msg);
+    utterThis.lang = 'en-au'//'en-au';
+    utterThis.rate = 0.8;
+    window.speechSynthesis.speak(utterThis);
+    var id = $(this).data("id");
+    cnt[id]++;
+    if ( cnt[id] >= click3 ){
+      var effect = Math.floor((Math.random()*3)+1);
+      $(this).fadeOut("slow");
+      completedCnt=0;
+      for(var i=0;i<words.length;i++){
+        completedCnt += cnt[i];
+      }
+      if ( completedCnt >= completed){
+        var utterThis = new SpeechSynthesisUtterance("Well Done! Olive!");
+        window.speechSynthesis.speak(utterThis);
+        $(this).html("<h2>Well Done! Olive</h2>");
+        setTimeout(function() {
+          window.location.href = "https://www.youtube.com/results?search_query=peppa+pig";
+      }, 2000);
+      }
+    }
+  });
+
+  $("#containerReadSpellWords, #containerSightWords").delegate(".box","mousedown", function(){
+/*    var color = Math.floor((Math.random()*3)+1);
+    switch(color){
+      case 1:
+      $(this).addClass("yellow")
+      break;
+      case 2:
+      $(this).addClass("blue")
+      break;
+      case 3:
+      $(this).addClass("lime")
+      break;
+      case 4:
+      $(this).addClass("indigo")
+      break;
+      case 5:
+      $(this).addClass("orange")
+      break;
+      default:
+      $(this).addClass("yellow")
+      break;
+    }
+*/
+      $(this).addClass("pink")
+  });
+  //
+  // $("#containerSightWords").delegate(".box","mousedown", function(){
+  //   $(this).addClass("yellow")
+  // });
+
+  $("#containerSightWords").delegate(".box","mouseup", function(){
+
+    msg = $(this).html();
+    id = $(this).attr("data-id");
+    var utterThis = new SpeechSynthesisUtterance(msg);
+    utterThis.lang = 'en-au'//'en-au';
+    utterThis.rate = 0.8;
+    window.speechSynthesis.speak(utterThis);
+
+    var id = $(this).data("id");
+    cnt[id]++;
+    if ( cnt[id] >= click3 ){
+      var effect = Math.floor((Math.random()*3)+1);
+      $(this).fadeOut("slow");
+      completedCnt=0;
+      for(var i=0;i<words.length;i++){
+        completedCnt += cnt[i];
+      }
+      if ( completedCnt >= completed){
+        var utterThis = new SpeechSynthesisUtterance("Well Done! Olive!");
+        window.speechSynthesis.speak(utterThis);
+        $(this).html("<h2>Well Done! Olive</h2>");
+        setTimeout(function() {
+          window.location.href = "https://www.youtube.com/results?search_query=peppa+pig";
+      }, 2000);
+      }
+    }
+  });
+
+  $("#menuList").delegate(".menuItem","mousedown", function(){
+    set = $(this).attr("data-set");
+    var gameType = $(this).attr("data-gameType");
+    localStorage.setItem("gameType",gameType)
+    localStorage.setItem("set",set)
+    $("#containerSightWords").html("")
+    $("#containerReadSpellWords").html("")
+    $("#containerSpellingTest").html("")
+
+    if ( gameType == "ReadSigntWord"){
+      loadSightWordGame(set)
+    }
+    else if ( gameType == "ReadSpellWord"){
+      loadReadSpellWordGame(set)
+    }
+    else{
+      wordNum = 0
+      loadSpellTestGame(set,wordNum)
+    }
+    $(".menu").removeClass("show");
+  });
+
+  </script>
+
+  </html>
